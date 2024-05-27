@@ -1,33 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-function calculateInvestmentResults(
-  initialInvestment: number,
-  annualInvestment: number,
-  expectedReturn: number,
-  duration: number
-) {
-  const annualData = [];
-  let investmentValue = initialInvestment;
-
-  for (let i = 0; i < duration; i++) {
-    const year = i + 1;
-    const interestEarnedInYear = investmentValue * (expectedReturn / 100);
-    investmentValue += interestEarnedInYear + annualInvestment;
-    const totalInterest =
-      investmentValue - annualInvestment * year - initialInvestment;
-    annualData.push({
-      year: year,
-      interest: interestEarnedInYear,
-      valueEndOfYear: investmentValue,
-      annualInvestment: annualInvestment,
-      totalInterest: totalInterest,
-      totalAmountInvested: initialInvestment + annualInvestment * year,
-    });
-  }
-
-  return annualData;
-}
+import { UserInputModel } from './user-input.model';
 
 @Component({
   selector: 'app-user-input',
@@ -37,22 +10,20 @@ function calculateInvestmentResults(
   styleUrl: './user-input.component.css',
 })
 export class UserInputComponent {
-  enteredInitialInvestment = '';
-  enteredAnnualInvestment = '';
-  enteredExpectedReturn = '';
-  enteredDuration = '';
+  @Output() calculate = new EventEmitter<UserInputModel>();
+  enteredInitialInvestment = '0';
+  enteredAnnualInvestment = '0';
+  enteredExpectedReturn = '5';
+  enteredDuration = '10';
+
+  annualData: any[] = [];
 
   onSubmit() {
-    const initialInvestment = +this.enteredInitialInvestment;
-    const annualInvestment = +this.enteredAnnualInvestment;
-    const expectedReturn = +this.enteredExpectedReturn;
-    const duration = +this.enteredDuration;
-
-    const annualData = calculateInvestmentResults(
-      initialInvestment,
-      annualInvestment,
-      expectedReturn,
-      duration
-    );
+    this.calculate.emit({
+      initialInvestment: +this.enteredInitialInvestment,
+      annualInvestment: +this.enteredAnnualInvestment,
+      expectedReturn: +this.enteredExpectedReturn,
+      duration: +this.enteredDuration,
+    });
   }
 }
